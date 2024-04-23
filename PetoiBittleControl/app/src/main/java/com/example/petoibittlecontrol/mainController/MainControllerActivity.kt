@@ -1,31 +1,32 @@
 package com.example.petoibittlecontrol.mainController
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
+import com.example.petoibittlecontrol.util.SampleApp
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
 import com.example.petoibittlecontrol.util.requestScanPermission
 import com.polidea.rxandroidble3.LogConstants
 import com.polidea.rxandroidble3.LogOptions
 import com.polidea.rxandroidble3.RxBleClient
-import com.polidea.rxandroidble3.exceptions.BleScanException
 import com.polidea.rxandroidble3.scan.ScanFilter
+import com.polidea.rxandroidble3.scan.ScanResult
 import com.polidea.rxandroidble3.scan.ScanSettings
-import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.Disposable
 
 class MainControllerActivity : AppCompatActivity() {
+
+    //private val rxBleClient = SampleApp.rxBleClient
+    private lateinit var rxBleClient : RxBleClient
     private lateinit var binding: ActivityMainControllerBinding
     private val viewModel : MainControllerViewModel = MainControllerViewModel()
 
-    companion object {
-        lateinit var rxBleClient: RxBleClient
-            private set
-    }
+    private var bleDevices :List<ScanResult> = listOf()
+
 
     private var scanDisposable: Disposable? = null
 
@@ -39,23 +40,14 @@ class MainControllerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        rxBleClient = RxBleClient.create(this)
         initBinding()
-        initBLEClient()
+
 
         binding.scanToggleBtn.setOnClickListener { onScanToggleClick() }
     }
 
-    private fun initBLEClient(){
-        rxBleClient = RxBleClient.create(this)
-        RxBleClient.updateLogOptions(
-            LogOptions.Builder()
-            .setLogLevel(LogConstants.INFO)
-            .setMacAddressLogSetting(LogConstants.MAC_ADDRESS_FULL)
-            .setUuidsLogSetting(LogConstants.UUIDS_FULL)
-            .setShouldLogAttributeValues(true)
-            .build()
-        )
-    }
+
 
 
 
@@ -91,6 +83,7 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun scanBleDevices() {
+        //bleDevices = listOf()
         val scanSettings = ScanSettings.Builder()
             .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
             .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
@@ -103,13 +96,34 @@ class MainControllerActivity : AppCompatActivity() {
 
         rxBleClient.scanBleDevices(scanSettings, scanFilter)
             .observeOn(AndroidSchedulers.mainThread())
-            .doFinally { dispose() }
-            .subscribe({
-                println("Scan result: $it")
+            //.doFinally { dispose() }
+            .subscribe({ device ->
+                if (!bleDevices.any { it.bleDevice.macAddress == device.bleDevice.macAddress }) {
+                    // Adăugăm dispozitivul în listă
+                    bleDevices += device
+                    Log.w("Devices:","New device found: ${device.bleDevice.name}")
+                    // Aici puteți face orice altceva cu dispozitivul nou adăugat
+                }
+
                 //resultsAdapter.addScanResult(it)
                     }, { onScanFailure(it) })
 
-            .let { scanDisposable = it }
+            .let {
+                scanDisposable = it }
+
+        val scanSubscription = rxBleClient.scanBleDevices(
+            ScanSettings.Builder() // .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // change if needed
+                // .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES) // change if needed
+                .build() // add filters if needed
+        )
+            .subscribe(
+                { scanResult -> }
+            ) { throwable -> }
+
+// When done, just dispose.
+
+// When done, just dispose.
+        scanSubscription.dispose()
     }
 
     private fun onScanFailure(throwable: Throwable) {
