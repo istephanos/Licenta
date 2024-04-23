@@ -57,7 +57,7 @@ dependencies {
 
 
 
-    //implementation ("io.reactivex.rxjava3:rxandroid:3.0.0")
+    implementation ("io.reactivex.rxjava3:rxandroid:3.0.0")
 
     implementation ("com.polidea.rxandroidble3:rxandroidble:1.18.1")
     implementation("androidx.core:core-ktx:1.13.0")

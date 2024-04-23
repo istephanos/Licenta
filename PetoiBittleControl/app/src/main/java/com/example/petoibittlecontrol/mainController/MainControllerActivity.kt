@@ -2,6 +2,8 @@ package com.example.petoibittlecontrol.mainController
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
@@ -10,10 +12,11 @@ import com.example.petoibittlecontrol.util.requestScanPermission
 import com.polidea.rxandroidble3.LogConstants
 import com.polidea.rxandroidble3.LogOptions
 import com.polidea.rxandroidble3.RxBleClient
+import com.polidea.rxandroidble3.exceptions.BleScanException
 import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanSettings
 import io.reactivex.rxjava3.disposables.Disposable
-
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 
 class MainControllerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainControllerBinding
@@ -78,7 +81,7 @@ class MainControllerActivity : AppCompatActivity() {
             scanDisposable?.dispose()
         } else {
             if (rxBleClient.isScanRuntimePermissionGranted) {
-                //scanBleDevices()
+                scanBleDevices()
             } else {
                 hasClickedScan = true
                 requestScanPermission(rxBleClient)
@@ -101,9 +104,20 @@ class MainControllerActivity : AppCompatActivity() {
         rxBleClient.scanBleDevices(scanSettings, scanFilter)
             .observeOn(AndroidSchedulers.mainThread())
             .doFinally { dispose() }
-            .subscribe({ resultsAdapter.addScanResult(it) }, { onScanFailure(it) })
+            .subscribe({
+                println("Scan result: $it")
+                //resultsAdapter.addScanResult(it)
+                    }, { onScanFailure(it) })
+
             .let { scanDisposable = it }
     }
+
+    private fun onScanFailure(throwable: Throwable) {
+        Log.w("ScanActivity", "Scan failed", throwable)
+    }
+
+
+
     private fun dispose() {
         scanDisposable = null
         //resultsAdapter.clearScanResults()
