@@ -55,7 +55,10 @@ android {
 
 dependencies {
 
-    //implementation ("androidx.databinding:databinding-compiler:7.2.1")
+
+
+
+    implementation ("com.polidea.rxandroidble3:rxandroidble:1.18.1")
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.9.0")
