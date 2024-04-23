@@ -3,16 +3,20 @@ package com.example.petoibittlecontrol.scan
 import android.os.Handler
 import android.os.Looper
 import com.example.petoibittlecontrol.scan.model.BleResponseModel
+import com.example.petoibittlecontrol.util.RxSchedulers
 /*import com.draeger.add.data.bluetooth.scan.model.BleResponseModel
 import com.draeger.add.domain.util.rx.RxBus
 import com.draeger.add.domain.util.rx.RxSchedulers*/
 import com.polidea.rxandroidble3.RxBleClient
-import com.polidea.rxandroidble3.exceptions.BleScanException
 import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanResult
 import com.polidea.rxandroidble3.scan.ScanSettings
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
+import org.koin.core.module.Module
+import org.koin.dsl.module
+
+
 
 open class BleScanManager(
     private val bleRxBus: RxBus,

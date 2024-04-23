@@ -1,4 +1,4 @@
-package com.example.petoibittlecontrol.scan
+package com.example.petoibittlecontrol.util
 
 import io.reactivex.rxjava3.core.Scheduler
 

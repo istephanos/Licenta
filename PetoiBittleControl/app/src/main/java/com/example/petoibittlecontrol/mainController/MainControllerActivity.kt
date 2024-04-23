@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
+import com.example.petoibittlecontrol.scan.BleScanManager
 import com.example.petoibittlecontrol.util.SampleApp
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
 import com.example.petoibittlecontrol.util.requestScanPermission
@@ -17,13 +18,15 @@ import com.polidea.rxandroidble3.scan.ScanResult
 import com.polidea.rxandroidble3.scan.ScanSettings
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainControllerActivity : AppCompatActivity() {
 
     //private val rxBleClient = SampleApp.rxBleClient
     private lateinit var rxBleClient : RxBleClient
     private lateinit var binding: ActivityMainControllerBinding
-    private val viewModel : MainControllerViewModel = MainControllerViewModel()
+    private val viewModel : MainControllerViewModel by inject()
 
     private var bleDevices :List<ScanResult> = listOf()
 
@@ -42,14 +45,8 @@ class MainControllerActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         rxBleClient = RxBleClient.create(this)
         initBinding()
-
-
         binding.scanToggleBtn.setOnClickListener { onScanToggleClick() }
     }
-
-
-
-
 
     private fun updateButtonUIState() =
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
@@ -63,8 +60,9 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun initBinding(){
-    binding = DataBindingUtil.setContentView(this,R.layout.activity_main_controller)
-        binding.viewModel = viewModel
+        viewModel.bleScanManager.startScan()
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_main_controller)
+        //binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }
 
@@ -96,7 +94,7 @@ class MainControllerActivity : AppCompatActivity() {
 
         rxBleClient.scanBleDevices(scanSettings, scanFilter)
             .observeOn(AndroidSchedulers.mainThread())
-            //.doFinally { dispose() }
+            .doFinally { dispose() }
             .subscribe({ device ->
                 if (!bleDevices.any { it.bleDevice.macAddress == device.bleDevice.macAddress }) {
                     // Adăugăm dispozitivul în listă
