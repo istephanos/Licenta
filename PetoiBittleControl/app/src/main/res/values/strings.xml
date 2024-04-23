@@ -1,4 +1,10 @@
 <resources>
     <string name="app_name">PetoiBittle Control</string>
     <string name="scan">Scan</string>
+    <string name="title_hello_bluetooth_world" />
+    <string name="button_scan_in_background">Scan in background</string>
+    <string name="button_start_scan" />
+    <string name="start_scan">Start scan</string>
+    <string name="stop_scan">Stop scan</string>
+
 </resources>
