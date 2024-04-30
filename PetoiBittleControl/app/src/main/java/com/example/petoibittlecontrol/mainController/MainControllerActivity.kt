@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.BleScanManager
+import com.example.petoibittlecontrol.scan.ScanResultsAdapter
 import com.example.petoibittlecontrol.util.SampleApp
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
 import com.example.petoibittlecontrol.util.requestScanPermission
@@ -33,9 +35,15 @@ class MainControllerActivity : AppCompatActivity() {
 
     private var scanDisposable: Disposable? = null
 
-    /*private val resultsAdapter =
-        ScanResultsAdapter { startActivity(DeviceActivity.newInstance(this, it.bleDevice.macAddress)) }
-*/
+    private val resultsAdapter =
+        ScanResultsAdapter.ScanResultsAdapter {
+            startActivity(
+                DeviceActivity.newInstance(
+                    this,
+                    it.bleDevice.macAddress
+                )
+            )
+        }
     private var hasClickedScan = false
 
     private val isScanning: Boolean
