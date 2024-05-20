@@ -10,7 +10,7 @@ private const val EXTRA_MAC_ADDRESS = "extra_mac_address"
 
 class DeviceActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainControllerBinding
+    /*private lateinit var binding: ActivityMainControllerBinding
     companion object {
         fun newInstance(context: Context, macAddress: String): Intent =
             Intent(context, DeviceActivity::class.java).apply { putExtra(EXTRA_MAC_ADDRESS, macAddress) }
@@ -27,5 +27,5 @@ class DeviceActivity : AppCompatActivity() {
 
         connect.setOnClickListener { startActivity(ConnectionExampleActivity.newInstance(this, macAddress)) }
         discovery.setOnClickListener { startActivity(ServiceDiscoveryExampleActivity.newInstance(this, macAddress)) }
-    }
+    }*/
 }

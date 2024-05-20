@@ -35,7 +35,7 @@ class MainControllerActivity : AppCompatActivity() {
 
     private var scanDisposable: Disposable? = null
 
-    private val resultsAdapter =
+   /* private val resultsAdapter =
         ScanResultsAdapter.ScanResultsAdapter {
             startActivity(
                 DeviceActivity.newInstance(
@@ -43,7 +43,7 @@ class MainControllerActivity : AppCompatActivity() {
                     it.bleDevice.macAddress
                 )
             )
-        }
+        }*/
     private var hasClickedScan = false
 
     private val isScanning: Boolean
