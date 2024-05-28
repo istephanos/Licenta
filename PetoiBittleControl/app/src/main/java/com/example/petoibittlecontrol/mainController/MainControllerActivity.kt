@@ -1,23 +1,18 @@
 package com.example.petoibittlecontrol.mainController
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
-import com.example.petoibittlecontrol.scan.BleScanManager
-import com.example.petoibittlecontrol.scan.ScanResultsAdapter
-import com.example.petoibittlecontrol.util.SampleApp
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
-import com.example.petoibittlecontrol.util.requestScanPermission
-import com.polidea.rxandroidble3.LogConstants
-import com.polidea.rxandroidble3.LogOptions
-import com.polidea.rxandroidble3.RxBleClient
-import com.polidea.rxandroidble3.scan.ScanFilter
 import com.polidea.rxandroidble3.scan.ScanResult
-import com.polidea.rxandroidble3.scan.ScanSettings
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
 import org.koin.android.ext.android.inject
@@ -25,26 +20,15 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainControllerActivity : AppCompatActivity() {
 
-    //private val rxBleClient = SampleApp.rxBleClient
-//    private lateinit var rxBleClient : RxBleClient
     private lateinit var binding: ActivityMainControllerBinding
-    private val viewModel : MainControllerViewModel by viewModel()
-
-//    private var bleDevices :List<ScanResult> = listOf()
-
-
+    private val viewModel: MainControllerViewModel by viewModel()
     private var scanDisposable: Disposable? = null
 
-   /* private val resultsAdapter =
-        ScanResultsAdapter.ScanResultsAdapter {
-            startActivity(
-                DeviceActivity.newInstance(
-                    this,
-                    it.bleDevice.macAddress
-                )
-            )
-        }*/
     private var hasClickedScan = false
+
+    companion object {
+        const val REQUEST_BLUETOOTH_PERMISSIONS = 1
+    }
 
     private val isScanning: Boolean
         get() = scanDisposable != null
@@ -52,28 +36,63 @@ class MainControllerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
-        binding.scanToggleBtn.setOnClickListener { onScanToggleClick() }
+        binding.scanToggleBtn.setOnClickListener {
+            hasClickedScan = true
+            checkAndRequestBluetoothPermissions()
+        }
+        checkAndRequestBluetoothPermissions()
     }
 
     private fun updateButtonUIState() =
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (isScanPermissionGranted(requestCode, grantResults) && hasClickedScan) {
-            hasClickedScan = false
+    private fun checkAndRequestBluetoothPermissions() {
+        val permissions = mutableListOf(
+            android.Manifest.permission.BLUETOOTH,
+            android.Manifest.permission.BLUETOOTH_ADMIN,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            permissions.add(android.Manifest.permission.BLUETOOTH_SCAN)
+            permissions.add(android.Manifest.permission.BLUETOOTH_CONNECT)
+        }
 
-            viewModel.bleScanManager.startScan()
+        val permissionsToRequest = permissions.filter {
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
+        }
+
+        if (permissionsToRequest.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsToRequest.toTypedArray(),
+                REQUEST_BLUETOOTH_PERMISSIONS
+            )
+        } else {
+            startBleScan()
         }
     }
 
-    private fun initBinding(){
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_main_controller)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                if (hasClickedScan) {
+                    hasClickedScan = false
+                    startBleScan()
+                }
+            } else {
+                Log.w("MainControllerActivity", "Permissions not granted")
+            }
+        }
+    }
+
+    private fun initBinding() {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main_controller)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }
 
-    private fun onScanToggleClick() {
+    private fun startBleScan() {
         if (isScanning) {
             scanDisposable?.dispose()
         } else {
@@ -82,62 +101,12 @@ class MainControllerActivity : AppCompatActivity() {
         updateButtonUIState()
     }
 
-//    private fun scanBleDevices() {
-//        //bleDevices = listOf()
-//        viewModel.bleScanManager.startScan()
-//
-//        val scanSettings = ScanSettings.Builder()
-//            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-//            .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
-//            .build()
-//
-//        val scanFilter = ScanFilter.Builder()
-////            .setDeviceAddress("B4:99:4C:34:DC:8B")
-//            // add custom filters if needed
-//            .build()
-//
-//        rxBleClient.scanBleDevices(scanSettings, scanFilter)
-//            .observeOn(AndroidSchedulers.mainThread())
-//            .doFinally { dispose() }
-//            .subscribe({ device ->
-//                if (!bleDevices.any { it.bleDevice.macAddress == device.bleDevice.macAddress }) {
-//                    // Adăugăm dispozitivul în listă
-//                    bleDevices += device
-//                    Log.w("Devices:","New device found: ${device.bleDevice.name}")
-//                    // Aici puteți face orice altceva cu dispozitivul nou adăugat
-//                }
-//
-//                //resultsAdapter.addScanResult(it)
-//                    }, { onScanFailure(it) })
-//
-//            .let {
-//                scanDisposable = it }
-//
-//        val scanSubscription = rxBleClient.scanBleDevices(
-//            ScanSettings.Builder() // .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY) // change if needed
-//                // .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES) // change if needed
-//                .build() // add filters if needed
-//        )
-//            .subscribe(
-//                { scanResult -> }
-//            ) { throwable -> }
-//
-//// When done, just dispose.
-//
-//// When done, just dispose.
-//        scanSubscription.dispose()
-//    }
-
     private fun onScanFailure(throwable: Throwable) {
         Log.w("ScanActivity", "Scan failed", throwable)
     }
 
-
-
     private fun dispose() {
         scanDisposable = null
-        //resultsAdapter.clearScanResults()
         updateButtonUIState()
     }
-
 }
