@@ -39,12 +39,13 @@ class MainControllerActivity : AppCompatActivity() {
         binding.scanToggleBtn.setOnClickListener {
             hasClickedScan = true
             checkAndRequestBluetoothPermissions()
+            startBleScan()
         }
-        checkAndRequestBluetoothPermissions()
     }
 
-    private fun updateButtonUIState() =
+    private fun updateButtonUIState() {
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
+    }
 
     private fun checkAndRequestBluetoothPermissions() {
         val permissions = mutableListOf(
@@ -95,8 +96,9 @@ class MainControllerActivity : AppCompatActivity() {
     private fun startBleScan() {
         if (isScanning) {
             scanDisposable?.dispose()
+            scanDisposable = null
         } else {
-            viewModel.bleScanManager.startScan()
+           scanDisposable = viewModel.bleScanManager.startScan()
         }
         updateButtonUIState()
     }

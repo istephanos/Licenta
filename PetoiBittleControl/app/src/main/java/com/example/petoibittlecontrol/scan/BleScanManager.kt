@@ -29,13 +29,14 @@ open class BleScanManager(
     private val bleParseDevice = BleScanParserDevice()
     private val scanDelayHandler = Handler(Looper.getMainLooper())
 
-    fun startScan(scanDelay: Long = 500) {
+    fun startScan(scanDelay: Long = 500): Disposable? {
         disposeScan()
 
-        if (rxBleClient.isScanRuntimePermissionGranted) {
+        return if (rxBleClient.isScanRuntimePermissionGranted) {
             discoverDevices(scanDelay)
         } else {
             initNoDevicesFound()
+            null
         }
     }
 
@@ -48,19 +49,17 @@ open class BleScanManager(
 
     fun isScanning() = isScanning
 
-    private fun discoverDevices(scanDelay: Long) {
-        scanDelayHandler.postDelayed({
-            scanBleDevices()
-                .observeOn(rxSchedulers.background())
-                .subscribe({
-                    isScanning = true
-                    bleParseDevice.parseScanResult(it, ::sendDiscoveredDevice)
-                }, {
-                    onScanFailure(it)
-                    initNoDevicesFound()
-                })
-                .let { scanDisposable = it }
-        }, scanDelay)
+    private fun discoverDevices(scanDelay: Long): Disposable {
+        return scanBleDevices()
+            .observeOn(rxSchedulers.background())
+            .subscribe({
+                isScanning = true
+                bleParseDevice.parseScanResult(it, ::sendDiscoveredDevice)
+            }, {
+                onScanFailure(it)
+                initNoDevicesFound()
+            })
+            .also { scanDisposable = it }
     }
 
     private fun sendDiscoveredDevice(bleResponseModel: BleResponseModel) {

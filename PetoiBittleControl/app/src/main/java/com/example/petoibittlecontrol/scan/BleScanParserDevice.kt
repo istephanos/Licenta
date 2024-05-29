@@ -50,6 +50,6 @@ class BleScanParserDevice {
     }
 
     private fun getDeviceName(bleScanResult: ScanResult) =
-        bleScanResult.scanRecord.deviceName.orEmpty().trim().replace(Regex("\\p{Cntrl}"), "")
+        bleScanResult.bleDevice.name.orEmpty().trim().replace(Regex("\\p{Cntrl}"), "")
 
 }
