@@ -1,6 +1,8 @@
 package com.example.petoibittlecontrol.mainController
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.petoibittlecontrol.scan.BleScanManager
 import com.example.petoibittlecontrol.scan.RxBus
@@ -18,9 +20,10 @@ class MainControllerViewModel(
 ):ViewModel()
 {
 
-    val listOfDevices = mutableSetOf<DeviceModel>()
+    private val _listOfDevices = MutableLiveData<MutableSet<DeviceModel>>(mutableSetOf())
+    val listOfDevices: LiveData<MutableSet<DeviceModel>> get() = _listOfDevices
 init {
-    listOfDevices.clear()
+    //listOfDevices.clear()
     getDiscoveredDevice()
 }
 
@@ -28,15 +31,16 @@ init {
         super.onCleared()
         compositeDisposable.clear()
     }
-    fun getDiscoveredDevice() {
+    private fun getDiscoveredDevice() {
         rxBus.toObservable()
             .observeOn(rxSchedulers.androidUI())
             .filter { it is BleResponseModel }
             .map { it as BleResponseModel }
             .subscribe({ bleResponseModel ->
 
-                       //device descoperit
-                listOfDevices.add(bleResponseModel.discoveredDevices)
+                val devices = _listOfDevices.value ?: mutableSetOf()
+                devices.add(bleResponseModel.discoveredDevices)
+                _listOfDevices.postValue(devices)
                 Log.e("Devices", bleResponseModel.discoveredDevices.name)
             }, {
                 Log.e("mda", it.localizedMessage)

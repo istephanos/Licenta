@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
@@ -41,6 +43,18 @@ class MainControllerActivity : AppCompatActivity() {
             checkAndRequestBluetoothPermissions()
             startBleScan()
         }
+
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
+        val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList())
+        binding.scanResults.layoutManager = LinearLayoutManager(this)
+        binding.scanResults.adapter = adapter
+
+        viewModel.listOfDevices.observe(this, Observer { devices ->
+            adapter.updateDevices(devices.toList())
+        })
     }
 
     private fun updateButtonUIState() {
@@ -78,8 +92,8 @@ class MainControllerActivity : AppCompatActivity() {
         if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
                 if (hasClickedScan) {
-                    hasClickedScan = false
                     startBleScan()
+                    hasClickedScan = false
                 }
             } else {
                 Log.w("MainControllerActivity", "Permissions not granted")
