@@ -4,6 +4,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
+import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
 import com.polidea.rxandroidble3.scan.ScanResult
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -48,7 +50,9 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList())
+        val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList()) { device ->
+            connectToDevice(device)
+        }
         binding.scanResults.layoutManager = LinearLayoutManager(this)
         binding.scanResults.adapter = adapter
 
@@ -115,6 +119,13 @@ class MainControllerActivity : AppCompatActivity() {
            scanDisposable = viewModel.bleScanManager.startScan()
         }
         updateButtonUIState()
+    }
+
+    private fun connectToDevice(device: DeviceModel) {
+        // Logica de conectare la dispozitiv
+        // Poți folosi device.macAddress pentru a iniția conexiunea
+        Toast.makeText(this, "Connecting to ${device.name}", Toast.LENGTH_SHORT).show()
+        // Aici adaugi logica specifică pentru conectarea la dispozitiv
     }
 
     private fun onScanFailure(throwable: Throwable) {

@@ -8,8 +8,10 @@ import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ItemDeviceBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 
-class DeviceAdapter(private var devices: List<DeviceModel>) :
-    RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
+class DeviceAdapter(
+    private var devices: List<DeviceModel>,
+    private val clickListener: (DeviceModel) -> Unit
+) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     class DeviceViewHolder(val binding: ItemDeviceBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -24,6 +26,9 @@ class DeviceAdapter(private var devices: List<DeviceModel>) :
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val device = devices[position]
         holder.binding.device = device
+        holder.binding.root.setOnClickListener {
+            clickListener(device)
+        }
         holder.binding.executePendingBindings()
     }
 
