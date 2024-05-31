@@ -20,6 +20,7 @@ class MainControllerViewModel(
 
     val listOfDevices = mutableSetOf<DeviceModel>()
 init {
+    listOfDevices.clear()
     getDiscoveredDevice()
 }
 
