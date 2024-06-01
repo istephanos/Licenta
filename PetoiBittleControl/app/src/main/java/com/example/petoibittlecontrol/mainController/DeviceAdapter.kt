@@ -1,5 +1,6 @@
 package com.example.petoibittlecontrol.mainController
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -30,6 +31,7 @@ class DeviceAdapter(
             clickListener(device)
         }
         holder.binding.executePendingBindings()
+        Log.d("DeviceAdapter", "Binding device: ${device.name}, MAC: ${device.macAddress}")
     }
 
     override fun getItemCount(): Int = devices.size

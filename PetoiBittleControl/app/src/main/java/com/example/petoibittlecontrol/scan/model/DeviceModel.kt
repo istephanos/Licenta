@@ -11,4 +11,5 @@ data class DeviceModel(
     var deviceStatus: DeviceStatus = DeviceStatus.DEFAULT,
 
 )  {
+
 }

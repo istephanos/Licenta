@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
+import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
@@ -27,6 +28,7 @@ class MainControllerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainControllerBinding
     private val viewModel: MainControllerViewModel by viewModel()
     private var scanDisposable: Disposable? = null
+    private lateinit var bluetoothConnectionManager: BluetoothConnectionManager
 
     private var hasClickedScan = false
 
@@ -122,10 +124,18 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun connectToDevice(device: DeviceModel) {
-        // Logica de conectare la dispozitiv
-        // Poți folosi device.macAddress pentru a iniția conexiunea
         Toast.makeText(this, "Connecting to ${device.name}", Toast.LENGTH_SHORT).show()
-        // Aici adaugi logica specifică pentru conectarea la dispozitiv
+        bluetoothConnectionManager.connectToDevice(device.macAddress) { isConnected ->
+            runOnUiThread {
+                if (isConnected) {
+                    Log.i("MainControllerActivity", "Connected to ${device.name}")
+                    Toast.makeText(this, "Conectat cu succes la ${device.name}", Toast.LENGTH_SHORT).show()
+                } else {
+                    Log.i("MainControllerActivity", "Disconnected from ${device.name}")
+                    Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun onScanFailure(throwable: Throwable) {

@@ -41,6 +41,8 @@ init {
                 val devices = _listOfDevices.value ?: mutableSetOf()
                 devices.add(bleResponseModel.discoveredDevices)
                 _listOfDevices.postValue(devices)
+                Log.d("MainControllerViewModel", "Discovered device: ${bleResponseModel.discoveredDevices.name}, MAC: ${bleResponseModel.discoveredDevices.macAddress}")
+
                 Log.e("Devices", bleResponseModel.discoveredDevices.name)
             }, {
                 Log.e("mda", it.localizedMessage)
