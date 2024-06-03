@@ -27,7 +27,10 @@ class DeviceAdapter(
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val device = devices[position]
         holder.binding.device = device
-        holder.binding.root.setOnClickListener {
+       /* holder.binding.root.setOnClickListener {
+            clickListener(device)
+        }*/
+        holder.binding.connectButton.setOnClickListener{
             clickListener(device)
         }
         holder.binding.executePendingBindings()

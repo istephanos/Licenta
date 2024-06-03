@@ -6,19 +6,21 @@ import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.content.Context
 import android.util.Log
+import com.example.petoibittlecontrol.scan.BleConstants.CHARACTERISTIC_UUID
+import com.example.petoibittlecontrol.scan.BleConstants.SERVICE_UUID
 import com.example.petoibittlecontrol.util.BluetoothPermissionsUtil
 
 class BluetoothConnectionManager(private val context: Context) {
 
     private var bluetoothGatt: BluetoothGatt? = null
 
-    @SuppressLint("MissingPermission")
+
     fun connectToDevice(macAddress: String, onConnectionStateChange: (Boolean) -> Unit) {
-        if (!BluetoothPermissionsUtil.hasBluetoothPermissions(context)) {
+        /*if (!BluetoothPermissionsUtil.hasBluetoothPermissions(context)) {
             Log.w("BluetoothConnectionManager", "Missing Bluetooth permissions")
             onConnectionStateChange(false)
             return
-        }
+        }*/
 
         try {
             val bluetoothDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(macAddress)
@@ -35,7 +37,7 @@ class BluetoothConnectionManager(private val context: Context) {
                 }
 
                 override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                    /*if (status == BluetoothGatt.GATT_SUCCESS) {
                         val services = gatt.services
                         for (service in services) {
                             Log.i("BluetoothGattCallback", "Discovered service: ${service.uuid}")
@@ -46,9 +48,25 @@ class BluetoothConnectionManager(private val context: Context) {
                         }
                     } else {
                         Log.w("BluetoothGattCallback", "onServicesDiscovered received: $status")
+                    }*/
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
+                        val service = gatt.getService(SERVICE_UUID)
+                        service?.let {
+                            val characteristic = it.getCharacteristic(CHARACTERISTIC_UUID)
+                            characteristic?.let { char ->
+                                // Abonează-te la notificări
+                                gatt.setCharacteristicNotification(char, true)
+                                // Scrie o valoare pe caracteristică
+                                char.value = byteArrayOf(0x01)
+                                gatt.writeCharacteristic(char)
+                            }
+                        }
+                    } else {
+                        Log.w("BluetoothGattCallback", "onServicesDiscovered received: $status")
                     }
                 }
             })
+
         } catch (e: SecurityException) {
             Log.e("BluetoothConnectionManager", "SecurityException: ${e.message}")
             onConnectionStateChange(false)
@@ -58,7 +76,6 @@ class BluetoothConnectionManager(private val context: Context) {
         }
     }
 
-    @SuppressLint("MissingPermission")
     fun disconnect() {
         if (!BluetoothPermissionsUtil.hasBluetoothPermissions(context)) {
             Log.w("BluetoothConnectionManager", "Missing Bluetooth permissions")
