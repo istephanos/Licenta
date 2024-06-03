@@ -8,10 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.databinding.ItemDeviceBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
+import com.example.petoibittlecontrol.scan.model.DeviceStatus
 
 class DeviceAdapter(
     private var devices: List<DeviceModel>,
-    private val clickListener: (DeviceModel) -> Unit
+    private val clickListener: (DeviceModel) -> Unit,
+    private val openRobot: (DeviceModel) -> Unit
+
 ) : RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder>() {
 
     class DeviceViewHolder(val binding: ItemDeviceBinding) : RecyclerView.ViewHolder(binding.root)
@@ -27,9 +30,11 @@ class DeviceAdapter(
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
         val device = devices[position]
         holder.binding.device = device
-       /* holder.binding.root.setOnClickListener {
-            clickListener(device)
-        }*/
+        holder.binding.root.setOnClickListener {
+            /*if(device.deviceStatus == DeviceStatus.CONNECTED)*/
+                openRobot(device)
+
+        }
         holder.binding.connectButton.setOnClickListener{
             clickListener(device)
         }

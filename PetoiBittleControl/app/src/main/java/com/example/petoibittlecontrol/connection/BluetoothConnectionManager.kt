@@ -1,19 +1,34 @@
 package com.example.petoibittlecontrol.connection
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import com.example.petoibittlecontrol.scan.BleConstants.CHARACTERISTIC_UUID
 import com.example.petoibittlecontrol.scan.BleConstants.SERVICE_UUID
 import com.example.petoibittlecontrol.util.BluetoothPermissionsUtil
+import java.util.UUID
 
 class BluetoothConnectionManager(private val context: Context) {
 
     private var bluetoothGatt: BluetoothGatt? = null
+    companion object {
+        @Volatile
+        private var INSTANCE: BluetoothConnectionManager? = null
 
+        fun getInstance(context: Context): BluetoothConnectionManager {
+            return INSTANCE ?: synchronized(this) {
+                val instance = BluetoothConnectionManager(context.applicationContext)
+                INSTANCE = instance
+                instance
+            }
+        }
+    }
 
     fun connectToDevice(macAddress: String, onConnectionStateChange: (Boolean) -> Unit) {
         /*if (!BluetoothPermissionsUtil.hasBluetoothPermissions(context)) {
@@ -29,7 +44,6 @@ class BluetoothConnectionManager(private val context: Context) {
                     if (newState == BluetoothGatt.STATE_CONNECTED) {
                         Log.i("BluetoothGattCallback", "Successfully connected to $macAddress")
                         gatt.discoverServices()
-                        onConnectionStateChange(true)
                     } else if (newState == BluetoothGatt.STATE_DISCONNECTED) {
                         Log.i("BluetoothGattCallback", "Disconnected from $macAddress")
                         onConnectionStateChange(false)
@@ -50,17 +64,11 @@ class BluetoothConnectionManager(private val context: Context) {
                         Log.w("BluetoothGattCallback", "onServicesDiscovered received: $status")
                     }*/
                     if (status == BluetoothGatt.GATT_SUCCESS) {
-                        val service = gatt.getService(SERVICE_UUID)
-                        service?.let {
-                            val characteristic = it.getCharacteristic(CHARACTERISTIC_UUID)
-                            characteristic?.let { char ->
-                                // Abonează-te la notificări
-                                gatt.setCharacteristicNotification(char, true)
-                                // Scrie o valoare pe caracteristică
-                                char.value = byteArrayOf(0x01)
-                                gatt.writeCharacteristic(char)
-                            }
-                        }
+                        onConnectionStateChange(true)
+
+                        //returneaza CallBack: conectare cu succes
+
+
                     } else {
                         Log.w("BluetoothGattCallback", "onServicesDiscovered received: $status")
                     }
@@ -73,6 +81,37 @@ class BluetoothConnectionManager(private val context: Context) {
         } catch (e: Exception) {
             Log.e("BluetoothConnectionManager", "Exception: ${e.message}")
             onConnectionStateChange(false)
+        }
+    }
+
+    fun writeCommand(serviciu: UUID, caracteristica:UUID,context: Context)
+    {
+
+        val service = bluetoothGatt?.getService(serviciu)
+        service?.let {
+            val characteristic = it.getCharacteristic(caracteristica)
+            characteristic?.let { char ->
+                // Abonează-te la notificări
+                if (ActivityCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return
+                }
+                bluetoothGatt?.setCharacteristicNotification(char, true)
+                // Scrie o valoare pe caracteristică
+                //char.value = byteArrayOf(c)
+                //comanda = char.value
+                //bluetoothGatt.writeCharacteristic(char)
+            }
         }
     }
 

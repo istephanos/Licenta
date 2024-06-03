@@ -1,5 +1,6 @@
 package com.example.petoibittlecontrol.mainController
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -16,6 +17,8 @@ import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
+import com.example.petoibittlecontrol.scan.model.DeviceStatus
+import com.example.petoibittlecontrol.util.BotControlsActivity
 import com.example.petoibittlecontrol.util.isScanPermissionGranted
 import com.polidea.rxandroidble3.scan.ScanResult
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -28,7 +31,7 @@ class MainControllerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainControllerBinding
     private val viewModel: MainControllerViewModel by viewModel()
     private var scanDisposable: Disposable? = null
-    private var bluetoothConnectionManager: BluetoothConnectionManager = BluetoothConnectionManager(this)
+    private lateinit var bluetoothConnectionManager: BluetoothConnectionManager
     private var hasClickedScan = false
 
     companion object {
@@ -46,14 +49,19 @@ class MainControllerActivity : AppCompatActivity() {
             checkAndRequestBluetoothPermissions()
             startBleScan()
         }
-
+        bluetoothConnectionManager = BluetoothConnectionManager.getInstance(this)
         setupRecyclerView()
     }
 
     private fun setupRecyclerView() {
-        val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList()) { device ->
-            connectToDevice(device)
-        }
+        val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList(), clickListener = {
+            connectToDevice(it)
+        }, openRobot = {
+            //open BotControlsActivity
+            val intent = Intent(this, BotControlsActivity::class.java)
+
+            startActivity(intent)
+        })
         binding.scanResults.layoutManager = LinearLayoutManager(this)
         binding.scanResults.adapter = adapter
 
@@ -132,6 +140,10 @@ class MainControllerActivity : AppCompatActivity() {
                 if (isConnected) {
                     Log.i("MainControllerActivity", "Connected to ${device.name}")
                     Toast.makeText(this, "Conectat cu succes la ${device.name}", Toast.LENGTH_SHORT).show()
+                    viewModel.listOfDevices.observe(this, Observer { devices ->
+                        devices.filter { it.macAddress == device.macAddress }
+                            ?.first()?.deviceStatus = DeviceStatus.CONNECTED
+                    })
                 } else {
                     Log.i("MainControllerActivity", "Disconnected from ${device.name}")
                     Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()

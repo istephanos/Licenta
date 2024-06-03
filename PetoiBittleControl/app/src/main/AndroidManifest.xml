@@ -23,6 +23,9 @@
             android:name=".MainActivity"
             android:exported="false" />
         <activity
+            android:name=".util.BotControlsActivity"
+            android:exported="false" />
+        <activity
             android:name=".mainController.MainControllerActivity"
             android:exported="true"
             >
