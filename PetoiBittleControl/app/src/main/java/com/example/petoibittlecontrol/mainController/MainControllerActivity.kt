@@ -59,7 +59,8 @@ class MainControllerActivity : AppCompatActivity() {
         binding.scanResults.adapter = adapter
 
         viewModel.listOfDevices.observe(this, Observer { devices ->
-            adapter.updateDevices(devices.toList())
+            val namedDevices = devices.filter { !it.name.isNullOrEmpty() }
+            adapter.updateDevices(namedDevices.toList())
         })
     }
 
@@ -125,7 +126,7 @@ class MainControllerActivity : AppCompatActivity() {
 
     private fun connectToDevice(device: DeviceModel) {
         Toast.makeText(this, "Connecting to ${device.name}", Toast.LENGTH_SHORT).show()
-        bluetoothConnectionManager.connectToDevice(device.macAddress) { isConnected ->
+        /*bluetoothConnectionManager.connectToDevice(device.macAddress) { isConnected ->
             runOnUiThread {
                 if (isConnected) {
                     Log.i("MainControllerActivity", "Connected to ${device.name}")
@@ -135,7 +136,7 @@ class MainControllerActivity : AppCompatActivity() {
                     Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
+        }*/
     }
 
     private fun onScanFailure(throwable: Throwable) {
