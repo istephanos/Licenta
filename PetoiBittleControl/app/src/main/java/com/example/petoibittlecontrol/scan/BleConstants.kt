@@ -24,9 +24,20 @@ object BleConstants {
 
     val IGNORED_SCENARIOS = listOf("singleSampleAdjustment", "singleTestAccuracyCheck")
 
-    const val serviciu1 = "00002a00-0000-1000-8000-00805f9b34fb"
-    const val serviciu2 = ""
-    const val serviciu3 = ""
+    const val serviciu1 = "00001800-0000-1000-8000-00805f9b34fb"
+    const val serviciu2 = "00001801-0000-1000-8000-00805f9b34fb"
+    const val serviciu3 = "0000ffe0-0000-1000-8000-00805f9b34fb" 
+
+    const val caracteristica11 = "00002a00-0000-1000-8000-00805f9b34fb"
+    const val caracteristica12 = "00002a01-0000-1000-8000-00805f9b34fb"
+    const val caracteristica13 = "00002a02-0000-1000-8000-00805f9b34fb"
+    const val caracteristica14 = "00002a04-0000-1000-8000-00805f9b34fb"
+
+    const val caracteristica21 ="00002a05-0000-1000-8000-00805f9b34fb"
+
+    const val caracteristica31 ="0000ffe1-0000-1000-8000-00805f9b34fb"
+    const val caracteristica32 ="0000ffe2-0000-1000-8000-00805f9b34fb"
+
     // UUID-urile serviciului și caracteristicii specifice pe care vrei să le utilizezi
     val SERVICE_UUID = UUID.fromString("0000180d-0000-1000-8000-00805f9b34fb") // Exemplu de UUID pentru un serviciu
     val CHARACTERISTIC_UUID = UUID.fromString("00002a37-0000-1000-8000-00805f9b34fb") // Exemplu de UUID pentru o caracteristică

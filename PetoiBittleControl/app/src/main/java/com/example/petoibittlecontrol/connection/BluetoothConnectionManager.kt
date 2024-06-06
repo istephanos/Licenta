@@ -51,7 +51,7 @@ class BluetoothConnectionManager(private val context: Context) {
                 }
 
                 override fun onServicesDiscovered(gatt: BluetoothGatt, status: Int) {
-                    /*if (status == BluetoothGatt.GATT_SUCCESS) {
+                    if (status == BluetoothGatt.GATT_SUCCESS) {
                         val services = gatt.services
                         for (service in services) {
                             Log.i("BluetoothGattCallback", "Discovered service: ${service.uuid}")
@@ -62,7 +62,7 @@ class BluetoothConnectionManager(private val context: Context) {
                         }
                     } else {
                         Log.w("BluetoothGattCallback", "onServicesDiscovered received: $status")
-                    }*/
+                    }
                     if (status == BluetoothGatt.GATT_SUCCESS) {
                         onConnectionStateChange(true)
 
