@@ -1,7 +1,6 @@
 package com.example.petoibittlecontrol.connection
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothGatt
 import android.bluetooth.BluetoothGattCallback
@@ -9,8 +8,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.petoibittlecontrol.scan.BleConstants.CHARACTERISTIC_UUID
-import com.example.petoibittlecontrol.scan.BleConstants.SERVICE_UUID
+import com.example.petoibittlecontrol.scan.BleCommands
 import com.example.petoibittlecontrol.util.BluetoothPermissionsUtil
 import java.util.UUID
 
@@ -84,33 +82,21 @@ class BluetoothConnectionManager(private val context: Context) {
         }
     }
 
-    fun writeCommand(serviciu: UUID, caracteristica:UUID,context: Context)
-    {
-
+    fun writeCommand(serviciu: UUID, caracteristica: UUID, context: Context, command: BleCommands) {
         val service = bluetoothGatt?.getService(serviciu)
         service?.let {
             val characteristic = it.getCharacteristic(caracteristica)
             characteristic?.let { char ->
                 // Abonează-te la notificări
-                if (ActivityCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+                if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // Handle the missing permissions
                     return
                 }
                 bluetoothGatt?.setCharacteristicNotification(char, true)
+
                 // Scrie o valoare pe caracteristică
-                //char.value = byteArrayOf(c)
-                //comanda = char.value
-                //bluetoothGatt.writeCharacteristic(char)
+                char.value = command.byteArray
+                bluetoothGatt?.writeCharacteristic(char)
             }
         }
     }
