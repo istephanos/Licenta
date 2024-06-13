@@ -31,7 +31,7 @@ class DeviceAdapter(
         val device = devices[position]
         holder.binding.device = device
         holder.binding.root.setOnClickListener {
-            /*if(device.deviceStatus == DeviceStatus.CONNECTED)*/
+            if(device.deviceStatus == DeviceStatus.CONNECTED)
                 openRobot(device)
 
         }

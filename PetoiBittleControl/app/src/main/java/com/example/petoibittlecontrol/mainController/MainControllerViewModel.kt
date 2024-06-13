@@ -23,7 +23,6 @@ class MainControllerViewModel(
     private val _listOfDevices = MutableLiveData<MutableSet<DeviceModel>>(mutableSetOf())
     val listOfDevices: LiveData<MutableSet<DeviceModel>> get() = _listOfDevices
 init {
-    //listOfDevices.clear()
     getDiscoveredDevice()
 }
 

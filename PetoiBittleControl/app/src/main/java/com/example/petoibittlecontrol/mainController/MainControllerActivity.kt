@@ -4,26 +4,21 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.petoibittlecontrol.DeviceActivity
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.scan.model.DeviceStatus
 import com.example.petoibittlecontrol.util.BotControlsActivity
-import com.example.petoibittlecontrol.util.isScanPermissionGranted
-import com.polidea.rxandroidble3.scan.ScanResult
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.Disposable
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainControllerActivity : AppCompatActivity() {
@@ -59,21 +54,31 @@ class MainControllerActivity : AppCompatActivity() {
         }, openRobot = {
             //open BotControlsActivity
             val intent = Intent(this, BotControlsActivity::class.java)
-
             startActivity(intent)
         })
         binding.scanResults.layoutManager = LinearLayoutManager(this)
         binding.scanResults.adapter = adapter
 
 
-        viewModel.listOfDevices.observe(this, Observer { devices ->
-            val namedDevices = devices.filter { !it.name.isNullOrEmpty() }
+        viewModel.listOfDevices.observe(this) { devices ->
+            val namedDevices = devices.filter { it.name.isNotEmpty() }
             adapter.updateDevices(namedDevices.toList())
-        })
+        }
     }
 
     private fun updateButtonUIState() {
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
+
+        object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                binding.scanToggleBtn.setText(R.string.start_scan)
+                Toast.makeText(this@MainControllerActivity, "Scanare finalizata ", Toast.LENGTH_SHORT).show()
+
+            }
+        }.start()
     }
 
     private fun checkAndRequestBluetoothPermissions() {
@@ -123,11 +128,11 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun startBleScan() {
-        if (isScanning) {
+        scanDisposable = if (isScanning) {
             scanDisposable?.dispose()
-            scanDisposable = null
+            null
         } else {
-           scanDisposable = viewModel.bleScanManager.startScan()
+            viewModel.bleScanManager.startScan()
         }
         updateButtonUIState()
     }
@@ -140,10 +145,9 @@ class MainControllerActivity : AppCompatActivity() {
                 if (isConnected) {
                     Log.i("MainControllerActivity", "Connected to ${device.name}")
                     Toast.makeText(this, "Conectat cu succes la ${device.name}", Toast.LENGTH_SHORT).show()
-                    viewModel.listOfDevices.observe(this, Observer { devices ->
-                        devices.filter { it.macAddress == device.macAddress }
-                            ?.first()?.deviceStatus = DeviceStatus.CONNECTED
-                    })
+                    viewModel.listOfDevices.observe(this) { devices ->
+                        devices.first { it.macAddress == device.macAddress }.deviceStatus = DeviceStatus.CONNECTED
+                    }
                 } else {
                     Log.i("MainControllerActivity", "Disconnected from ${device.name}")
                     Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()

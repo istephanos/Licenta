@@ -26,7 +26,7 @@ enum class DeviceStatus {
             return "Device available"
         }
         override var buttontDescription: String
-            get() = "AVAILABLE"
+            get() = "CONNECT"
             set(value) {}
     },
     NOT_AVAILABLE {
