@@ -1,4 +1,4 @@
-package com.example.petoibittlecontrol.scan
+package com.example.petoibittlecontrol
 
 import java.util.UUID
 

@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.petoibittlecontrol.scan.BleCommands
+import com.example.petoibittlecontrol.BleCommands
 import com.example.petoibittlecontrol.util.BluetoothPermissionsUtil
 import java.util.UUID
 

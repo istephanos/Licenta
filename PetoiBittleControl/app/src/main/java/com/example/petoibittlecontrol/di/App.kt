@@ -32,11 +32,7 @@ class App : Application() {
             )
         }
     }
-    }
-
-   /* private fun initTimber() {
-        Timber.plant(Timber.DebugTree())
-    }*/
+}
 
     private fun initRxBleClient() {
         RxBleClient.updateLogOptions(

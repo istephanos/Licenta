@@ -8,5 +8,12 @@
     <string name="stop_scan">Stop scan</string>
     <string name="button_connect">Connect</string>
     <string name="button_service_discovery">Service discovery</string>
+    <string name="voice">Voice</string>
+    <string name="up">Up</string>
+    <string name="left">Left</string>
+    <string name="center">Center</string>
+    <string name="right">Right</string>
+    <string name="gesturi">Gesturi</string>
+    <string name="log">Logs</string>
 
 </resources>

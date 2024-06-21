@@ -18,6 +18,7 @@ import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.scan.model.DeviceStatus
 import com.example.petoibittlecontrol.util.BotControlsActivity
+import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.disposables.Disposable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -39,6 +40,7 @@ class MainControllerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
+        title = "Cautare robot Pettoi"
         binding.scanToggleBtn.setOnClickListener {
             hasClickedScan = true
             checkAndRequestBluetoothPermissions()
@@ -69,13 +71,17 @@ class MainControllerActivity : AppCompatActivity() {
     private fun updateButtonUIState() {
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
 
-        object : CountDownTimer(30000, 1000) {
+        object : CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
+                val timpRamas = millisUntilFinished / 1000
+                Snackbar.make(binding.root, "Se cauta dispozitive. Asteptati! Timp ramas: $timpRamas secunde", Snackbar.LENGTH_LONG).show()
+
             }
 
             override fun onFinish() {
                 binding.scanToggleBtn.setText(R.string.start_scan)
-                Toast.makeText(this@MainControllerActivity, "Scanare finalizata ", Toast.LENGTH_SHORT).show()
+                val devices = viewModel.listOfDevices.value ?: emptyList()
+                checkForPetoiDevices(devices)
 
             }
         }.start()
@@ -156,12 +162,13 @@ class MainControllerActivity : AppCompatActivity() {
         }
     }
 
-    private fun onScanFailure(throwable: Throwable) {
-        Log.w("ScanActivity", "Scan failed", throwable)
-    }
+    private fun checkForPetoiDevices(devices: Collection<DeviceModel>) {
+        val hasPetoiDevice = devices.any { it.name.contains("Petoi", ignoreCase = true) }
+        if (!hasPetoiDevice) {
+            Snackbar.make(binding.root, "Nu a fost găsit robotul Petoi", Snackbar.LENGTH_LONG).show()
 
-    private fun dispose() {
-        scanDisposable = null
-        updateButtonUIState()
+        }
+        else
+            Snackbar.make(binding.root, "Scanare finalizata", Snackbar.LENGTH_LONG).show()
     }
 }

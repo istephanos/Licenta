@@ -21,17 +21,27 @@
             android:layout_column="0"
             android:layout_margin="4dp"
             android:background="@drawable/gesture_control"
-            android:contentDescription="Gesturi" />
+            android:contentDescription="@string/gesturi" />
 
         <Button
             android:id="@+id/button_voice"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_row="0"
-            android:layout_column="2"
+            android:layout_column="1"
             android:layout_margin="4dp"
             android:background="@drawable/baseline_keyboard_voice_24"
-            android:contentDescription="Voice" />
+            android:contentDescription="@string/voice" />
+
+        <Button
+            android:id="@+id/button_logs"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_row="0"
+            android:layout_column="2"
+            android:layout_margin="4dp"
+            android:background="@mipmap/ic__log"
+            android:contentDescription="@string/log" />
 
         <Button
             android:id="@+id/button_up"
@@ -41,7 +51,7 @@
             android:layout_column="1"
             android:layout_margin="4dp"
             android:background="@drawable/baseline_arrow_upward_24"
-            android:contentDescription="Up" />
+            android:contentDescription="@string/up" />
 
         <Button
             android:id="@+id/button_left"
@@ -51,7 +61,7 @@
             android:layout_column="0"
             android:layout_margin="4dp"
             android:background="@drawable/baseline_arrow_back_24"
-            android:contentDescription="Left" />
+            android:contentDescription="@string/left" />
 
         <Button
             android:id="@+id/button_center"
@@ -61,7 +71,7 @@
             android:layout_column="1"
             android:layout_margin="4dp"
             android:background="@color/teal_200"
-            android:contentDescription="Center" />
+            android:contentDescription="@string/center" />
 
         <Button
             android:id="@+id/button_right"
@@ -71,7 +81,7 @@
             android:layout_column="2"
             android:layout_margin="4dp"
             android:background="@drawable/baseline_arrow_forward_24"
-            android:contentDescription="Right" />
+            android:contentDescription="@string/right" />
 
         <Button
             android:id="@+id/button_down"

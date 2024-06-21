@@ -2,15 +2,10 @@ package com.example.petoibittlecontrol.scan
 
 import com.example.petoibittlecontrol.scan.model.BleResponseModel
 
-import com.example.petoibittlecontrol.scan.BleConstants.HEX_DEVICE_FILTER
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.scan.model.DeviceStatus
-import com.example.petoibittlecontrol.scan.model.swapEndian
 import com.example.petoibittlecontrol.scan.model.toHex
-import com.example.petoibittlecontrol.scan.model.values
 import com.polidea.rxandroidble3.scan.ScanResult
-import java.util.*
-import kotlin.math.floor
 
 
 class BleScanParserDevice {
