@@ -40,7 +40,7 @@ class MainControllerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initBinding()
-        title = "Cautare robot Pettoi"
+        title = "Cautare robot Petoi"
         binding.scanToggleBtn.setOnClickListener {
             hasClickedScan = true
             checkAndRequestBluetoothPermissions()
@@ -54,7 +54,7 @@ class MainControllerActivity : AppCompatActivity() {
         val adapter = DeviceAdapter(viewModel.listOfDevices.value?.toList() ?: emptyList(), clickListener = {
             connectToDevice(it)
         }, openRobot = {
-            //open BotControlsActivity
+            //deschidere BotControlsActivity
             val intent = Intent(this, BotControlsActivity::class.java)
             startActivity(intent)
         })
@@ -71,21 +71,28 @@ class MainControllerActivity : AppCompatActivity() {
     private fun updateButtonUIState() {
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
 
+        val snackbar = Snackbar.make(binding.root, "Se cauta dispozitive. Asteptati! Timp ramas: 20 secunde", Snackbar.LENGTH_INDEFINITE)
+        snackbar.setAction("Închide") {
+            snackbar.dismiss()
+        }
+        snackbar.show()
+
         object : CountDownTimer(20000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 val timpRamas = millisUntilFinished / 1000
-                Snackbar.make(binding.root, "Se cauta dispozitive. Asteptati! Timp ramas: $timpRamas secunde", Snackbar.LENGTH_LONG).show()
-
+                snackbar.setText("Se cauta dispozitive. Asteptati! Timp ramas: $timpRamas secunde")
             }
 
             override fun onFinish() {
                 binding.scanToggleBtn.setText(R.string.start_scan)
                 val devices = viewModel.listOfDevices.value ?: emptyList()
                 checkForPetoiDevices(devices)
-
+                snackbar.dismiss()
             }
         }.start()
     }
+
+
 
     private fun checkAndRequestBluetoothPermissions() {
         val permissions = mutableListOf(
@@ -163,7 +170,7 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun checkForPetoiDevices(devices: Collection<DeviceModel>) {
-        val hasPetoiDevice = devices.any { it.name.contains("Petoi", ignoreCase = true) }
+        val hasPetoiDevice = devices.any { it.name.contains("Bittle", ignoreCase = true) }
         if (!hasPetoiDevice) {
             Snackbar.make(binding.root, "Nu a fost găsit robotul Petoi", Snackbar.LENGTH_LONG).show()
 

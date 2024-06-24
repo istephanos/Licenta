@@ -9,13 +9,13 @@
         android:id="@+id/command_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Command"
+        android:text="Comanda"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/timestamp_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Timestamp"
+        android:text="Trimisa la: "
         android:textSize="12sp" />
 </LinearLayout>

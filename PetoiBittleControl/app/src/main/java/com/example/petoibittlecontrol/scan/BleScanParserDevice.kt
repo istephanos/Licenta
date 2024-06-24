@@ -12,25 +12,16 @@ class BleScanParserDevice {
 
 
     fun parseScanResult(bleScanResult: ScanResult, sendDiscoveredDevice: (bleResponseModel: BleResponseModel) -> Unit) {
-        val discoveredScanResult = bleScanResult.scanRecord.bytes.toHex()
-
-//        if (bleScanResult.bleDevice.name.orEmpty().startsWith("Pepa")) {
-//            sendDiscoveredDevice(
-//
-//            )
-//        }
-
-//        if (discoveredScanResult.contains(HEX_DEVICE_FILTER)) {
-//            val discoveredDevice = getDiscoveredDevice(bleScanResult)
-//            sendDiscoveredDevice(discoveredDevice)
-//        }
-
+        // Verificăm dacă numele dispozitivului începe cu "Bittle"
+        if (bleScanResult.bleDevice.name.orEmpty().startsWith("Bittle")) {
             val discoveredDevice = getDiscoveredDevice(bleScanResult)
             sendDiscoveredDevice(discoveredDevice)
+            return
+        }
     }
 
+
     private fun getDiscoveredDevice(bleScanResult: ScanResult): BleResponseModel {
-        val manufacturerData = ""
         val serialNumber = ""
 
         return BleResponseModel(
