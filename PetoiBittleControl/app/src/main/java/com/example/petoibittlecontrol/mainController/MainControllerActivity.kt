@@ -17,7 +17,7 @@ import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
 import com.example.petoibittlecontrol.databinding.ActivityMainControllerBinding
 import com.example.petoibittlecontrol.scan.model.DeviceModel
 import com.example.petoibittlecontrol.scan.model.DeviceStatus
-import com.example.petoibittlecontrol.util.BotControlsActivity
+import com.example.petoibittlecontrol.commands.BotControlsActivity
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.disposables.Disposable
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -172,18 +172,18 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun connectToDevice(device: DeviceModel) {
-        Toast.makeText(this, "Connecting to ${device.name}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Conectare la ${device.name}", Toast.LENGTH_SHORT).show()
 
         bluetoothConnectionManager.connectToDevice(device.macAddress) { isConnected ->
             runOnUiThread {
                 if (isConnected) {
-                    Log.i("MainControllerActivity", "Connected to ${device.name}")
+                    Log.i("MainControllerActivity", "Conectat cu succes la ${device.name}")
                     Toast.makeText(this, "Conectat cu succes la ${device.name}", Toast.LENGTH_SHORT).show()
                     viewModel.listOfDevices.observe(this) { devices ->
                         devices.first { it.macAddress == device.macAddress }.deviceStatus = DeviceStatus.CONNECTED
                     }
                 } else {
-                    Log.i("MainControllerActivity", "Disconnected from ${device.name}")
+                    Log.i("MainControllerActivity", "Nu s-a putut realiza conectarea la ${device.name}")
                     Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()
                 }
             }

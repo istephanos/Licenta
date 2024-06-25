@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.app.ActivityCompat
-import com.example.petoibittlecontrol.BleCommands
+import com.example.petoibittlecontrol.commands.BleCommands
 import com.example.petoibittlecontrol.util.BluetoothPermissionsUtil
 import java.util.UUID
 
@@ -29,11 +29,6 @@ class BluetoothConnectionManager(private val context: Context) {
     }
 
     fun connectToDevice(macAddress: String, onConnectionStateChange: (Boolean) -> Unit) {
-        /*if (!BluetoothPermissionsUtil.hasBluetoothPermissions(context)) {
-            Log.w("BluetoothConnectionManager", "Missing Bluetooth permissions")
-            onConnectionStateChange(false)
-            return
-        }*/
 
         try {
             val bluetoothDevice = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(macAddress)
@@ -87,14 +82,14 @@ class BluetoothConnectionManager(private val context: Context) {
         service?.let {
             val characteristic = it.getCharacteristic(caracteristica)
             characteristic?.let { char ->
-                // Abonează-te la notificări
+                // Abonare la notificări
                 if (ActivityCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                     // Handle the missing permissions
                     return
                 }
                 bluetoothGatt?.setCharacteristicNotification(char, true)
 
-                // Scrie o valoare pe caracteristică
+                // Scriere valoare pe caracteristică
                 char.value = command.byteArray
                 bluetoothGatt?.writeCharacteristic(char)
             }

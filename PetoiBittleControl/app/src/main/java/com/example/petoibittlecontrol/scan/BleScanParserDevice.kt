@@ -13,8 +13,11 @@ class BleScanParserDevice {
 
 
     fun parseScanResult(bleScanResult: ScanResult, sendDiscoveredDevice: (bleResponseModel: BleResponseModel) -> Unit) {
-        val discoveredScanResult = bleScanResult.scanRecord.bytes.toHex()
 
+        /*if (bleScanResult.bleDevice.name.orEmpty().startsWith("Bittle")) {
+            val discoveredDevice = getDiscoveredDevice(bleScanResult)
+            sendDiscoveredDevice(discoveredDevice)
+        }*/
 
         val discoveredDevice = getDiscoveredDevice(bleScanResult)
         sendDiscoveredDevice(discoveredDevice)

@@ -7,6 +7,7 @@
     tools:context=".mainController.MainControllerActivity">
 
     <GridLayout
+        android:id="@+id/gridLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -91,8 +92,20 @@
             android:layout_column="1"
             android:layout_margin="4dp"
             android:background="@drawable/baseline_arrow_downward_24"
-            android:contentDescription="Down" />
+            android:contentDescription="@string/down" />
 
     </GridLayout>
 
+    <Button
+        android:id="@+id/button_all_commands"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/gridLayout"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="101dp"
+        android:layout_marginBottom="0dp"
+        android:background="#FFFDD0"
+        android:text="@string/all_commands"
+        android:textColor="@color/black" />
 </RelativeLayout>

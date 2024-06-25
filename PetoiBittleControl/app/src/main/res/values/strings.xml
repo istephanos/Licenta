@@ -15,5 +15,7 @@
     <string name="right">Right</string>
     <string name="gesturi">Gesturi</string>
     <string name="log">Logs</string>
+    <string name="all_commands">Toate comenzile disponibile</string>
+    <string name="down">Inapoi\n</string>
 
 </resources>
