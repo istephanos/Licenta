@@ -1,5 +1,6 @@
 package com.example.petoibittlecontrol.scan
 
+import com.example.petoibittlecontrol.BleConstants.HEX_DEVICE_FILTER
 import com.example.petoibittlecontrol.scan.model.BleResponseModel
 
 import com.example.petoibittlecontrol.scan.model.DeviceModel
@@ -12,12 +13,11 @@ class BleScanParserDevice {
 
 
     fun parseScanResult(bleScanResult: ScanResult, sendDiscoveredDevice: (bleResponseModel: BleResponseModel) -> Unit) {
-        // Verificăm dacă numele dispozitivului începe cu "Bittle"
-        if (bleScanResult.bleDevice.name.orEmpty().startsWith("Bittle")) {
-            val discoveredDevice = getDiscoveredDevice(bleScanResult)
-            sendDiscoveredDevice(discoveredDevice)
-            return
-        }
+        val discoveredScanResult = bleScanResult.scanRecord.bytes.toHex()
+
+
+        val discoveredDevice = getDiscoveredDevice(bleScanResult)
+        sendDiscoveredDevice(discoveredDevice)
     }
 
 

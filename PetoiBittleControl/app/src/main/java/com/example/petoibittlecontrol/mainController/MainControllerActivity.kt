@@ -69,27 +69,48 @@ class MainControllerActivity : AppCompatActivity() {
     }
 
     private fun updateButtonUIState() {
+        // Schimbă textul butonului în funcție de starea scanării
         binding.scanToggleBtn.setText(if (isScanning) R.string.stop_scan else R.string.start_scan)
 
-        val snackbar = Snackbar.make(binding.root, "Se cauta dispozitive. Asteptati! Timp ramas: 20 secunde", Snackbar.LENGTH_INDEFINITE)
-        snackbar.setAction("Închide") {
-            snackbar.dismiss()
-        }
-        snackbar.show()
-
-        object : CountDownTimer(20000, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                val timpRamas = millisUntilFinished / 1000
-                snackbar.setText("Se cauta dispozitive. Asteptati! Timp ramas: $timpRamas secunde")
-            }
-
-            override fun onFinish() {
-                binding.scanToggleBtn.setText(R.string.start_scan)
-                val devices = viewModel.listOfDevices.value ?: emptyList()
-                checkForPetoiDevices(devices)
+        if (isScanning) {
+            // Dacă scanarea este pornită (butonul afișează "Stop scan")
+            val snackbar = Snackbar.make(binding.root, "Se cauta dispozitive. Asteptati! Timp ramas: 20 secunde", Snackbar.LENGTH_INDEFINITE)
+            snackbar.setAction("Închide") {
                 snackbar.dismiss()
             }
-        }.start()
+            snackbar.show()
+
+            // Pornim numărătoarea inversă pentru 20 de secunde
+            object : CountDownTimer(20000, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val timpRamas = millisUntilFinished / 1000
+                    snackbar.setText("Se cauta dispozitive. Asteptati! Timp ramas: $timpRamas secunde")
+                }
+
+                override fun onFinish() {
+                    binding.scanToggleBtn.setText(R.string.start_scan)
+                    val devices = viewModel.listOfDevices.value ?: emptyList()
+                    checkForPetoiDevices(devices)
+                    snackbar.dismiss()
+                }
+            }.start()
+        } else {
+            // Dacă scanarea este oprită manual (butonul afișează "Start scan" și este apăsat)
+            val snackbar = Snackbar.make(binding.root, "Scanare dispozitive încheiată", Snackbar.LENGTH_LONG)
+            snackbar.show()
+        }
+    }
+
+    private fun checkForPetoiDevices(devices: Collection<DeviceModel>) {
+        // Verificăm dacă există dispozitive "Bittle" în lista de dispozitive
+        val foundBittle = devices.any { it.name.startsWith("Bittle") }
+        val message = if (foundBittle) {
+            "Dispozitivul Bittle a fost găsit!"
+        } else {
+            "Nu a fost găsit niciun dispozitiv Bittle."
+        }
+        // Afișăm mesajul în funcție de rezultatul căutării
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
 
@@ -167,15 +188,5 @@ class MainControllerActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun checkForPetoiDevices(devices: Collection<DeviceModel>) {
-        val hasPetoiDevice = devices.any { it.name.contains("Bittle", ignoreCase = true) }
-        if (!hasPetoiDevice) {
-            Snackbar.make(binding.root, "Nu a fost găsit robotul Petoi", Snackbar.LENGTH_LONG).show()
-
-        }
-        else
-            Snackbar.make(binding.root, "Scanare finalizata", Snackbar.LENGTH_LONG).show()
     }
 }
