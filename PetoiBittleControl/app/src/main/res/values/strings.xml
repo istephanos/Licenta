@@ -17,5 +17,7 @@
     <string name="log">Logs</string>
     <string name="all_commands">Toate comenzile disponibile</string>
     <string name="down">Inapoi\n</string>
+    <string name="comanda">Comanda</string>
+    <string name="trimisa_la">Trimisa la:</string>
 
 </resources>
