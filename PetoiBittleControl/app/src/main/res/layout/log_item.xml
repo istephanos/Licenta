@@ -10,12 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/comanda"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:textColor="@color/black"/>
 
     <TextView
         android:id="@+id/timestamp_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/trimisa_la"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:textColor="@color/black"/>
 </LinearLayout>

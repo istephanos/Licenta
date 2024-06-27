@@ -1,6 +1,8 @@
 package com.example.petoibittlecontrol.commands
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
@@ -11,10 +13,14 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.speech.RecognizerIntent
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
@@ -22,6 +28,7 @@ import com.example.petoibittlecontrol.BleConstants.CARACTERISTICA_TX
 import com.example.petoibittlecontrol.BleConstants.SERVICIU_TX
 import com.example.petoibittlecontrol.mainController.logs.LogActivity
 import com.example.petoibittlecontrol.util.LogDatabaseHelper
+import java.util.Locale
 
 class BotControlsActivity : AppCompatActivity() {
 
@@ -34,6 +41,11 @@ class BotControlsActivity : AppCompatActivity() {
     private lateinit var logsButton: Button
     private lateinit var allCommandButton: Button
     private lateinit var gestureButton: Button
+    private lateinit var voiceCommandButton: Button
+    private val REQUEST_CODE_SPEECH_INPUT = 100
+
+    private lateinit var voiceCommandLauncher: ActivityResultLauncher<Intent>
+
 
     private lateinit var gestureValuesText: TextView
 
@@ -96,11 +108,21 @@ class BotControlsActivity : AppCompatActivity() {
         logsButton = findViewById(R.id.button_logs)
         allCommandButton = findViewById(R.id.button_all_commands)
         gestureButton = findViewById(R.id.button_gesture)
+        voiceCommandButton = findViewById(R.id.button_voice)
+
 
         gestureValuesText = findViewById(R.id.gesture_text)
 
         originalColor = ContextCompat.getColor(this, R.color.original_color)
         highlightColor = ContextCompat.getColor(this, R.color.highlight_color)
+
+        voiceCommandLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                val spokenText = result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.get(0) ?: ""
+                handleVoiceCommand(spokenText)
+            }
+        }
+
 
         forwardCommand.setOnClickListener {
             sendCommandToRobot(BleCommands.WALK_FORWARD)
@@ -146,7 +168,12 @@ class BotControlsActivity : AppCompatActivity() {
                 stopHighlightingButton()
             }
         }
+
+        voiceCommandButton.setOnClickListener {
+            startVoiceRecognition()
+        }
     }
+
 
     private fun startHighlightingButton() {
         isHighlighting = true
@@ -177,6 +204,33 @@ class BotControlsActivity : AppCompatActivity() {
 
     private fun stopGestureControl() {
         sensorManager.unregisterListener(sensorEventListener)
+    }
+
+    private fun startVoiceRecognition() {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Spune comanda pentru robot")
+
+        try {
+            voiceCommandLauncher.launch(intent)
+        } catch (e: ActivityNotFoundException) {
+            // Afișează un mesaj că dispozitivul nu suportă recunoașterea vocală
+            Toast.makeText(this, "Dispozitivul tău nu suportă recunoașterea vocală", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleVoiceCommand(command: String) {
+        voiceCommandMap.commandMap.entries.find { entry ->
+            command.contains(entry.key, ignoreCase = true)
+        }?.let { entry ->
+            sendCommandToRobot(entry.value)
+            saveLog("Comanda trimisă: ${entry.key.replaceFirstChar {
+                if (it.isLowerCase()) it.titlecase(
+                    Locale.ROOT
+                ) else it.toString()
+            }}")
+        } ?: Toast.makeText(this, "Comandă necunoscută", Toast.LENGTH_SHORT).show()
     }
 
     private fun sendCommandToRobot(command: BleCommands) {
