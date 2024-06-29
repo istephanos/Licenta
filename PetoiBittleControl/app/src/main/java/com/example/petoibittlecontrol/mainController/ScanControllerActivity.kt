@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.Html
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -22,7 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import io.reactivex.rxjava3.disposables.Disposable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainControllerActivity : AppCompatActivity() {
+class ScanControllerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainControllerBinding
     private val viewModel: MainControllerViewModel by viewModel()
@@ -103,14 +104,15 @@ class MainControllerActivity : AppCompatActivity() {
 
     private fun checkForPetoiDevices(devices: Collection<DeviceModel>) {
         // Verificăm dacă există dispozitive "Bittle" în lista de dispozitive
-        val foundBittle = devices.any { it.name.startsWith("Bittle") }
+        val foundBittle = devices.any { it.name.startsWith("Bittle")  || it.name.startsWith("Petoi")}
         val message = if (foundBittle) {
-            "Dispozitivul Bittle a fost găsit!"
+            "Robotul Petoi Bittle a fost găsit!\nPentru a vă conecta la robot,\nutlizați butonul CONECTARE"
         } else {
-            "Nu a fost găsit niciun dispozitiv Bittle."
+            "Nu a fost găsit robotul Petoi Bittle.\nVerificați ca robotul să fie \npornit în momentul scanării. "
         }
         // Afișăm mesajul în funcție de rezultatul căutării
-        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+        val snackbar = Snackbar.make(binding.root, Html.fromHtml(message), Snackbar.LENGTH_LONG)
+        snackbar.show()
     }
 
 

@@ -19,5 +19,8 @@
     <string name="down">Inapoi\n</string>
     <string name="comanda">Comanda</string>
     <string name="trimisa_la">Trimisa la:</string>
+    <string name="btn_start_string">SĂ ÎNCEPEM</string>
+    <string name="colaj_bittle">Colaj Bittle</string>
+    <string name="bun_venit">Bun venit!</string>
 
 </resources>
