@@ -1,5 +1,6 @@
 package com.example.petoibittlecontrol.commands
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -16,6 +17,7 @@ class AllCommandsActivity : AppCompatActivity() {
     private var bluetoothConnectionManager: BluetoothConnectionManager = BluetoothConnectionManager.getInstance(this)
 
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAllCommandsBinding.inflate(layoutInflater)
@@ -61,11 +63,9 @@ class AllCommandsActivity : AppCompatActivity() {
         createCommandButton(BleCommands.CALIBRATION, "Calibrare")
         createCommandButton(BleCommands.DROPPED, "Căzut")
         createCommandButton(BleCommands.LIFTED, "Ridicat")
-        createCommandButton(BleCommands.LANDING, "Aterizare")
         createCommandButton(BleCommands.REST, "Odihnă")
         createCommandButton(BleCommands.SIT, "Așezare")
         createCommandButton(BleCommands.STRETCH, "Întindere")
-        createCommandButton(BleCommands.UP, "Sus")
         createCommandButton(BleCommands.ZERO, "Zero")
 
         linearLayout.addView(movementTextView)
@@ -83,7 +83,7 @@ class AllCommandsActivity : AppCompatActivity() {
         createCommandButton(BleCommands.TROT_FORWARD, "Tropăit înainte")
         createCommandButton(BleCommands.TROT_LEFT, "Tropăit stânga")
         createCommandButton(BleCommands.STEP_ORIGIN, "Pas la origine")
-        createCommandButton(BleCommands.SPING_LEFT, "Sping stânga")
+        createCommandButton(BleCommands.SPING_LEFT, "Rotire la  stânga")
         createCommandButton(BleCommands.WALK_FORWARD, "Mers înainte")
         createCommandButton(BleCommands.WALK_LEFT, "Mers stânga")
         createCommandButton(BleCommands.WALK_RIGHT, "Mers dreapta")
@@ -91,36 +91,36 @@ class AllCommandsActivity : AppCompatActivity() {
         linearLayout.addView(behaviorTextView)
         createCommandButton(BleCommands.ANGRY, "Furie")
         createCommandButton(BleCommands.BACKFLIP, "Salt înapoi")
-        createCommandButton(BleCommands.BOXING, "Box")
-        createCommandButton(BleCommands.CHEERS, "Ura")
         createCommandButton(BleCommands.CHECK, "Verificare")
-        createCommandButton(BleCommands.COME_HERE, "Vino Aici")
-        createCommandButton(BleCommands.DIG, "Sapă")
         createCommandButton(BleCommands.FRONT_FLIP, "Salt în față")
-        createCommandButton(BleCommands.HIGH_FIVE, "Salut")
-        createCommandButton(BleCommands.GOOD_BOY, "Băiat bun")
-        createCommandButton(BleCommands.HANDSTAND, "Stând în mâini")
-        createCommandButton(BleCommands.HUG, "Îmbrățișare")
         createCommandButton(BleCommands.HI, "Salut")
-        createCommandButton(BleCommands.HAND_SHAKE, "Strângere de mână")
-        createCommandButton(BleCommands.HANDS_UP, "Mâinile sus")
-        createCommandButton(BleCommands.JUMP, "Sărit")
-        createCommandButton(BleCommands.KICK, "Lovitură")
-        createCommandButton(BleCommands.LEAP_OVER, "Sari peste")
-        createCommandButton(BleCommands.MOON_WALK, "Moonwalk")
-        createCommandButton(BleCommands.NOD, "Dă din cap")
         createCommandButton(BleCommands.PLAY_DEAD, "Prefă-te mort")
         createCommandButton(BleCommands.PEE, "Pipi")
         createCommandButton(BleCommands.PUSH_UPS, "Flotări")
         createCommandButton(BleCommands.PUSH_UPS_ONE_HAND, "Flotăre cu o mână")
         createCommandButton(BleCommands.RECOVER, "Recuperare")
         createCommandButton(BleCommands.ROLL, "Rostogolește-te")
-        createCommandButton(BleCommands.SCRATCH, "Scărpină")
-        createCommandButton(BleCommands.SNIFF, "Miros")
-        createCommandButton(BleCommands.BE_TABLE, "Fii masă")
         createCommandButton(BleCommands.TEST, "Test")
-        createCommandButton(BleCommands.WAVE_HEAD, "Flutură capul")
-        createCommandButton(BleCommands.ALL_JOINT_AT_0, "Toate articulațiile La 0")
+
+        //createCommandButton(BleCommands.GOOD_BOY, "Băiat bun")
+        //createCommandButton(BleCommands.HANDSTAND, "Stând în mâini")
+        //createCommandButton(BleCommands.HUG, "Îmbrățișare")
+        //createCommandButton(BleCommands.COME_HERE, "Vino Aici")
+        //createCommandButton(BleCommands.DIG, "Sapă")
+        //createCommandButton(BleCommands.WAVE_HEAD, "Flutură capul")
+        //createCommandButton(BleCommands.ALL_JOINT_AT_0, "Toate articulațiile La 0")
+        //createCommandButton(BleCommands.BOXING, "Box")
+        //createCommandButton(BleCommands.CHEERS, "Ura")
+        //createCommandButton(BleCommands.SCRATCH, "Scărpină")
+        //createCommandButton(BleCommands.SNIFF, "Miros")
+        //createCommandButton(BleCommands.BE_TABLE, "Fii masă")
+        //createCommandButton(BleCommands.HAND_SHAKE, "Strângere de mână")
+        //createCommandButton(BleCommands.HANDS_UP, "Mâinile sus")
+        //createCommandButton(BleCommands.JUMP, "Sărit")
+        //createCommandButton(BleCommands.KICK, "Lovitură")
+        //createCommandButton(BleCommands.LEAP_OVER, "Sari peste")
+        //createCommandButton(BleCommands.MOON_WALK, "Moonwalk")
+        //createCommandButton(BleCommands.NOD, "Dă din cap")
     }
 
     private fun sendCommand(command: BleCommands) {

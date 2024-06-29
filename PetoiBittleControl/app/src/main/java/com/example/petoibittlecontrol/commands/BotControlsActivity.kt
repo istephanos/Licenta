@@ -42,16 +42,13 @@ class BotControlsActivity : AppCompatActivity() {
     private lateinit var allCommandButton: Button
     private lateinit var gestureButton: Button
     private lateinit var voiceCommandButton: Button
-    private val REQUEST_CODE_SPEECH_INPUT = 100
 
     private lateinit var voiceCommandLauncher: ActivityResultLauncher<Intent>
 
-
     private lateinit var gestureValuesText: TextView
 
-
     private lateinit var sensorManager: SensorManager
-    private lateinit var accelerometer: Sensor
+    private var accelerometer: Sensor? = null
 
     private val handler = Handler(Looper.getMainLooper())
     private var isHighlighting = false
@@ -110,7 +107,6 @@ class BotControlsActivity : AppCompatActivity() {
         gestureButton = findViewById(R.id.button_gesture)
         voiceCommandButton = findViewById(R.id.button_voice)
 
-
         gestureValuesText = findViewById(R.id.gesture_text)
 
         originalColor = ContextCompat.getColor(this, R.color.original_color)
@@ -122,7 +118,6 @@ class BotControlsActivity : AppCompatActivity() {
                 handleVoiceCommand(spokenText)
             }
         }
-
 
         forwardCommand.setOnClickListener {
             sendCommandToRobot(BleCommands.WALK_FORWARD)
@@ -174,7 +169,6 @@ class BotControlsActivity : AppCompatActivity() {
         }
     }
 
-
     private fun startHighlightingButton() {
         isHighlighting = true
         gestureValuesText.visibility = View.VISIBLE
@@ -198,8 +192,12 @@ class BotControlsActivity : AppCompatActivity() {
 
     private fun initGestureControl() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
-        sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        if (accelerometer != null) {
+            sensorManager.registerListener(sensorEventListener, accelerometer, SensorManager.SENSOR_DELAY_NORMAL)
+        } else {
+            Toast.makeText(this, "Senzorul de accelerometru nu este disponibil pe acest dispozitiv", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun stopGestureControl() {
@@ -237,6 +235,7 @@ class BotControlsActivity : AppCompatActivity() {
         bluetoothConnectionManager.writeCommand(SERVICIU_TX, CARACTERISTICA_TX, this, command)
     }
 
+    
     private fun saveLog(command: String) {
         val dbHelper = LogDatabaseHelper(this)
         try {
