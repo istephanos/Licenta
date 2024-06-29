@@ -8,6 +8,7 @@ import com.example.petoibittlecontrol.scan.BleScanManager
 import com.example.petoibittlecontrol.scan.RxBus
 import com.example.petoibittlecontrol.scan.model.BleResponseModel
 import com.example.petoibittlecontrol.scan.model.DeviceModel
+import com.example.petoibittlecontrol.scan.model.DeviceStatus
 import com.example.petoibittlecontrol.util.RxSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
@@ -25,6 +26,19 @@ class MainControllerViewModel(
 init {
     getDiscoveredDevice()
 }
+
+    fun updateDeviceStatus(macAddress: String, status: DeviceStatus) {
+        _listOfDevices.value?.let { currentDevices ->
+            val updatedDevices = currentDevices.map { device ->
+                if (device.macAddress == macAddress) {
+                    device.copy(deviceStatus = status)
+                } else {
+                    device
+                }
+            }.toMutableSet()
+            _listOfDevices.value = updatedDevices
+        }
+    }
 
     override fun onCleared() {
         super.onCleared()

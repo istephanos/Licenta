@@ -184,6 +184,7 @@ class ScanControllerActivity : AppCompatActivity() {
                     viewModel.listOfDevices.observe(this) { devices ->
                         devices.first { it.macAddress == device.macAddress }.deviceStatus = DeviceStatus.CONNECTED
                     }
+                    viewModel.updateDeviceStatus(device.macAddress, DeviceStatus.CONNECTED)
                 } else {
                     Log.i("MainControllerActivity", "Nu s-a putut realiza conectarea la ${device.name}")
                     Toast.makeText(this, "Nu s-a putut realiza conectarea la ${device.name}", Toast.LENGTH_SHORT).show()

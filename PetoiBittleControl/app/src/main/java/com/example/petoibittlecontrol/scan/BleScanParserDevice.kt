@@ -13,15 +13,11 @@ class BleScanParserDevice {
 
 
     fun parseScanResult(bleScanResult: ScanResult, sendDiscoveredDevice: (bleResponseModel: BleResponseModel) -> Unit) {
-
         if (bleScanResult.bleDevice.name.orEmpty().startsWith("Bittle")
             || bleScanResult.bleDevice.name.orEmpty().startsWith("Petoi") ) {
             val discoveredDevice = getDiscoveredDevice(bleScanResult)
             sendDiscoveredDevice(discoveredDevice)
         }
-
-        /*val discoveredDevice = getDiscoveredDevice(bleScanResult)
-        sendDiscoveredDevice(discoveredDevice)*/
     }
 
 

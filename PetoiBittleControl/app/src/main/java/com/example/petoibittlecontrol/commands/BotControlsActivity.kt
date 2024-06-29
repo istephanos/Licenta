@@ -50,10 +50,10 @@ class BotControlsActivity : AppCompatActivity() {
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
 
-    private val handler = Handler(Looper.getMainLooper())
-    private var isHighlighting = false
     private var originalColor: Int = 0
     private var highlightColor: Int = 0
+
+    private var isGestureControl: Boolean = false
 
     private val sensorEventListener = object : SensorEventListener {
         override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
@@ -91,6 +91,7 @@ class BotControlsActivity : AppCompatActivity() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.bot_controls)
@@ -155,39 +156,20 @@ class BotControlsActivity : AppCompatActivity() {
         }
 
         gestureButton.setOnClickListener {
-            if (!isHighlighting) {
+            if (!isGestureControl) {
                 initGestureControl()
-                startHighlightingButton()
+                gestureValuesText.visibility = View.VISIBLE
+                gestureButton.setText("Opreste Controlul prin Gesturi")
             } else {
                 stopGestureControl()
-                stopHighlightingButton()
+                gestureValuesText.visibility = View.INVISIBLE
             }
+            isGestureControl = !isGestureControl
         }
 
         voiceCommandButton.setOnClickListener {
             startVoiceRecognition()
         }
-    }
-
-    private fun startHighlightingButton() {
-        isHighlighting = true
-        gestureValuesText.visibility = View.VISIBLE
-        handler.post(object : Runnable {
-            override fun run() {
-                if (isHighlighting) {
-                    gestureButton.setBackgroundColor(
-                        if (gestureButton.solidColor == originalColor) highlightColor else originalColor
-                    )
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        })
-    }
-
-    private fun stopHighlightingButton() {
-        isHighlighting = false
-        gestureButton.setBackgroundColor(originalColor)
-        handler.removeCallbacksAndMessages(null)
     }
 
     private fun initGestureControl() {
@@ -235,7 +217,7 @@ class BotControlsActivity : AppCompatActivity() {
         bluetoothConnectionManager.writeCommand(SERVICIU_TX, CARACTERISTICA_TX, this, command)
     }
 
-    
+
     private fun saveLog(command: String) {
         val dbHelper = LogDatabaseHelper(this)
         try {
