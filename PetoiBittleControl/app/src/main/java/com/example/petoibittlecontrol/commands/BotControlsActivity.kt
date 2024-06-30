@@ -50,46 +50,7 @@ class BotControlsActivity : AppCompatActivity() {
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
 
-    private var originalColor: Int = 0
-    private var highlightColor: Int = 0
-
     private var isGestureControl: Boolean = false
-
-    private val sensorEventListener = object : SensorEventListener {
-        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-        @SuppressLint("SetTextI18n")
-        override fun onSensorChanged(event: SensorEvent?) {
-            event?.let {
-                val x = it.values[0]
-                val y = it.values[1]
-
-                gestureValuesText.text = """
-                                        Inainte: y > 2
-                                        Inapoi: y < -2
-                                        Stanga: x > 2
-                                        Dreapta: x < -2
-                                        x: $x, y: $y
-                                        """.trimIndent()
-
-                if (x > 2) {
-                    sendCommandToRobot(BleCommands.WALK_LEFT)
-                    saveLog("Comanda trimisa: Stanga")
-                } else if (x < -2) {
-                    sendCommandToRobot(BleCommands.WALK_RIGHT)
-                    saveLog("Comanda trimisa: Dreapta")
-                }
-
-                if (y > 2) {
-                    sendCommandToRobot(BleCommands.WALK_FORWARD)
-                    saveLog("Comanda trimisa: Inainte")
-                } else if (y < -2) {
-                    sendCommandToRobot(BleCommands.BACKWARD)
-                    saveLog("Comanda trimisa: Inapoi")
-                }
-
-            }
-        }
-    }
 
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,9 +70,6 @@ class BotControlsActivity : AppCompatActivity() {
         voiceCommandButton = findViewById(R.id.button_voice)
 
         gestureValuesText = findViewById(R.id.gesture_text)
-
-        originalColor = ContextCompat.getColor(this, R.color.original_color)
-        highlightColor = ContextCompat.getColor(this, R.color.highlight_color)
 
         voiceCommandLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK && result.data != null) {
@@ -172,6 +130,38 @@ class BotControlsActivity : AppCompatActivity() {
         }
     }
 
+    private val sensorEventListener = object : SensorEventListener {
+        override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+        @SuppressLint("SetTextI18n")
+        override fun onSensorChanged(event: SensorEvent?) {
+            event?.let {
+                val x = it.values[0]
+                val y = it.values[1]
+                gestureValuesText.text = """
+                                        Inainte: y > 2
+                                        Inapoi: y < -2
+                                        Stanga: x > 2
+                                        Dreapta: x < -2
+                                        x: $x, y: $y
+                                        """.trimIndent()
+                if (x > 2) {
+                    sendCommandToRobot(BleCommands.WALK_LEFT)
+                    saveLog("Comanda trimisa: Stanga")
+                } else if (x < -2) {
+                    sendCommandToRobot(BleCommands.WALK_RIGHT)
+                    saveLog("Comanda trimisa: Dreapta")
+                }
+                if (y > 2) {
+                    sendCommandToRobot(BleCommands.WALK_FORWARD)
+                    saveLog("Comanda trimisa: Inainte")
+                } else if (y < -2) {
+                    sendCommandToRobot(BleCommands.BACKWARD)
+                    saveLog("Comanda trimisa: Inapoi")
+                }
+            }
+        }
+    }
+
     private fun initGestureControl() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
@@ -195,7 +185,6 @@ class BotControlsActivity : AppCompatActivity() {
         try {
             voiceCommandLauncher.launch(intent)
         } catch (e: ActivityNotFoundException) {
-            // Afișează un mesaj că dispozitivul nu suportă recunoașterea vocală
             Toast.makeText(this, "Dispozitivul tău nu suportă recunoașterea vocală", Toast.LENGTH_SHORT).show()
         }
     }
@@ -223,7 +212,7 @@ class BotControlsActivity : AppCompatActivity() {
         try {
             dbHelper.addLog(command)
         } catch (e: Exception) {
-            Log.e("LogDatabaseHelper", "Failed to save log: $command", e)
+            Log.e("LogDatabaseHelper", "Eșuare la salvarea comenzii în baza de date: $command", e)
         } finally {
             dbHelper.close()
         }

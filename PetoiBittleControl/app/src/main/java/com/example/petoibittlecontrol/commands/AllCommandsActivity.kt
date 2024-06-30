@@ -77,7 +77,7 @@ class AllCommandsActivity : AppCompatActivity() {
         createCommandButton(BleCommands.GAP_FORWARD, "Salt înainte")
         createCommandButton(BleCommands.GAP_LEFT, "Salt stânga")
         createCommandButton(BleCommands.HALLOWEEN, "Halloween")
-        createCommandButton(BleCommands.JUMP_FORWARD, "Sărire înainte")
+        createCommandButton(BleCommands.JUMP_FORWARD, "Salt înainte")
         createCommandButton(BleCommands.PUSH_FORWARD, "Împinge înainte")
         createCommandButton(BleCommands.PUSH_LEFT, "Împinge stânga")
         createCommandButton(BleCommands.TROT_FORWARD, "Tropăit înainte")
