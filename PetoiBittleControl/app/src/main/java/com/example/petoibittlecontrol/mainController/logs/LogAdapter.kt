@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.petoibittlecontrol.R
 
-class LogAdapter(private val cursor: Cursor) : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
+class LogAdapter(private var cursor: Cursor) : RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
     class LogViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var commandTextView: TextView
         var timestampTextView: TextView
@@ -34,7 +34,19 @@ class LogAdapter(private val cursor: Cursor) : RecyclerView.Adapter<LogAdapter.L
         }
     }
 
+
+
     override fun getItemCount(): Int {
         return cursor.count
+    }
+
+    fun swapCursor(newCursor: Cursor?) {
+        cursor?.close()
+        if (newCursor != null) {
+            cursor = newCursor
+        }
+        if (newCursor != null) {
+            notifyDataSetChanged()
+        }
     }
 }

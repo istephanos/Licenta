@@ -2,6 +2,7 @@ package com.example.petoibittlecontrol.commands
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,7 @@ import com.example.petoibittlecontrol.BleConstants
 import com.example.petoibittlecontrol.R
 import com.example.petoibittlecontrol.connection.BluetoothConnectionManager
 import com.example.petoibittlecontrol.databinding.ActivityAllCommandsBinding
+import com.example.petoibittlecontrol.util.LogDatabaseHelper
 
 class AllCommandsActivity : AppCompatActivity() {
 
@@ -23,9 +25,9 @@ class AllCommandsActivity : AppCompatActivity() {
         binding = ActivityAllCommandsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         val linearLayout = binding.linearLayoutCommands
 
-        // Function to create buttons
         fun createCommandButton(command: BleCommands, buttonText: String) {
             val button = Button(this).apply {
                 text = buttonText

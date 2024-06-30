@@ -117,10 +117,11 @@ class BotControlsActivity : AppCompatActivity() {
             if (!isGestureControl) {
                 initGestureControl()
                 gestureValuesText.visibility = View.VISIBLE
-                gestureButton.setText("Opreste Controlul prin Gesturi")
+                Toast.makeText(this, "Controlati robotul prin gesturi!", Toast.LENGTH_SHORT).show()
             } else {
                 stopGestureControl()
                 gestureValuesText.visibility = View.INVISIBLE
+                Toast.makeText(this, "Controlul prin gesturi a fost dezactivat", Toast.LENGTH_SHORT).show()
             }
             isGestureControl = !isGestureControl
         }
@@ -205,7 +206,6 @@ class BotControlsActivity : AppCompatActivity() {
     private fun sendCommandToRobot(command: BleCommands) {
         bluetoothConnectionManager.writeCommand(SERVICIU_TX, CARACTERISTICA_TX, this, command)
     }
-
 
     private fun saveLog(command: String) {
         val dbHelper = LogDatabaseHelper(this)

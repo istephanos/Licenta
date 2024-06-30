@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#FFFDD0"
-    android:id="@+id/recycler_view"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    />
+    android:background="#FFFDD0">
+
+    <Button
+        android:id="@+id/button_reset_logs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Resetare istoric comenzi"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/button_reset_logs"
+        android:paddingTop="16dp"
+        android:background="#FFFDD0"/>
+</RelativeLayout>

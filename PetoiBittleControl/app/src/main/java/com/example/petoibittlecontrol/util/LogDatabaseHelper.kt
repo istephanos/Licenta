@@ -46,6 +46,13 @@ class LogDatabaseHelper(context: Context?) :
             return cursor
         }
 
+    fun deleteAllLogs() {
+        val db = this.writableDatabase
+        db.delete(TABLE_NAME, null, null)
+        db.close()
+        Log.d("DatabaseHelper", "All logs deleted")
+    }
+
     companion object {
         private const val DATABASE_NAME = "log.db"
         private const val DATABASE_VERSION = 1
